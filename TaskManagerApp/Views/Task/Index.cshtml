@@ -1,0 +1,110 @@
+﻿
+@section Styles{
+    <link href="~/Content/css/Task/task-home.css" rel="stylesheet" />
+}
+
+<div class="card-hover-shadow-2x mb-3 card">
+    <div class="card-header-tab card-header bg-dark text-white">
+        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+            <i class="fa fa-book fa-2x mt-1"></i>&nbsp;
+            <span class="task-title ml-2">Task Manager App</span>
+        </div>
+
+    </div>
+    <div class="card-body p-0">
+        <nav>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-all-task" data-loadFor="1" data-toggle="tab" href="#nav-all-task" role="tab"
+                   aria-controls="nav-home" aria-selected="true">
+                    <strong>All</strong>
+                </a>
+                <a class="nav-item nav-link" id="nav-completed-task" data-loadFor="2" data-toggle="tab" href="#nav-all-task" role="tab"
+                   aria-controls="nav-profile" aria-selected="false">
+                    <strong>Completed</strong>
+                </a>
+                <a class="nav-item nav-link" id="nav-pending-task" data-loadFor="3" data-toggle="tab" href="#nav-all-task" role="tab"
+                   aria-controls="nav-contact" aria-selected="false">
+                    <strong>Remaining</strong>
+                </a>
+            </div>
+        </nav>
+
+        <div class="scroll-area-sm">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-all-task" role="tabpanel" aria-labelledby="nav-home-tab">
+                            <perfect-scrollbar class="ps-show-limits">
+                                <div style="position: static;" class="ps ps--active-y">
+                                    <div class="ps-content">
+                                        <ul class="list-group list-group-flush">
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </perfect-scrollbar>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="card-footer d-block p-0">
+
+        <div class="text-right">
+            <button class="btn btn-outline-primary m-3" onclick="showNewTaskSection()" id="btnAddTask">
+                Add Task
+            </button>
+        </div>
+
+        <div class="bg-light p-3" style="display:none;" id="divAddTaskSection">
+            @{
+                @Html.AntiForgeryToken()
+
+                <div class="text-center">
+                    <h5><u>Task Details</u></h5>
+                    <input id="hdnTaskId" type="hidden" value="0" />
+                </div>
+                <hr />
+
+                <div id="errTaskMainError"></div>
+
+                <div class="mb-2">
+                    <label for="txtTitle" class="form-label">Title <span class="text-danger">*</span></label>
+                    <input type="text" id="txtTitle" class="form-control" placeholder="New Task.." />
+                </div>
+
+                <div class="mb-3">
+                    <label for="txtDescription" class="form-label">Description <span class="text-danger">*</span></label>
+                    <textarea id="txtDescription" , class="form-control" placeholder="Enter task in details.." rows="2"></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveTask()">Submit</button>
+                <button class="btn btn-light" onclick="hideSaveTaskSection()">Cancel</button>
+            }
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/Content/js/Task/task.js"></script>
+
+    <script>
+        $(function () {
+            $(".nav-item.nav-link").on('click', function () {
+                $(".nav-item.nav-link").removeClass("active");
+                $(this).addClass("active");
+
+                filterType = $(this).attr("data-loadFor");
+                getAllTasks(filterType);
+            })
+        })
+    </script>
+}
