@@ -49,26 +49,18 @@ namespace TaskManagerApp.Data.Services
             return new TaskEntity().ToEntity(_taskRepository.UpdateTask(tblTask));
         }
 
-        public TaskEntity DeleteTaskById(int id)
+        public bool DeleteTaskById(int id)
         {
             // implement DeleteTaskById method from ITaskRepository
             // before return convert TblTask to TaskEntity
-            var result = _taskRepository.DeleteTask(id);
-            if (result)
-                return new TaskEntity().ToEntity(new TblTask());
-            else
-                return new TaskEntity().ToEntity(null);
+            return _taskRepository.DeleteTask(id);
         }
 
-        public TaskEntity IsCompleted(int id, bool isCompleted)
+        public bool IsCompleted(int id, bool isCompleted)
         {
             // implement DeleteTaskById method from ITaskRepository
             // before return convert TblTask to TaskEntity
-            var result = _taskRepository.IsCompleted(id, isCompleted);
-            if (result)
-                return new TaskEntity().ToEntity(new TblTask());
-            else
-                return new TaskEntity().ToEntity(null);
+            return _taskRepository.IsCompleted(id, isCompleted);
         }
     }
 }

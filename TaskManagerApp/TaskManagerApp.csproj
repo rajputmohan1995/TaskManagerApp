@@ -119,6 +119,7 @@
     <Compile Include="Controllers\TaskController.cs" />
     <Compile Include="Data\DBContext\TaskManagerDBContext.cs" />
     <Compile Include="Data\DBEntities\TblTask.cs" />
+    <Compile Include="Data\Entities\ResponseResult.cs" />
     <Compile Include="Data\Entities\TaskEntity.cs" />
     <Compile Include="Data\Repository\Interfaces\ITaskRepository.cs" />
     <Compile Include="Data\Repository\TaskRepository.cs" />

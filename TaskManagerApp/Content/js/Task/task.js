@@ -4,6 +4,16 @@ $(document).ready(function () {
     getAllTasks(filterType);
 });
 
+$(function () {
+    $(".nav-item.nav-link").on('click', function () {
+        $(".nav-item.nav-link").removeClass("active");
+        $(this).addClass("active");
+
+        filterType = $(this).attr("data-loadFor");
+        getAllTasks(filterType);
+    })
+})
+
 function getAllTasks(taskFilter) {
 
     var listContent = $("div.ps-content").find("ul");
@@ -22,14 +32,14 @@ function getAllTasks(taskFilter) {
                             </li>`);
 
     $.get(rootUrl + "/Task/GetAll?taskFilter=" + taskFilter,
-        function (data) {
+        function (response) {
 
             $(listContent).html("");
 
-            if (data && data.length > 0) {
+            if (response && response.Success && response.Data && response.Data.length > 0) {
 
-                for (var i = 0; i < data.length; i++) {
-                    var task = data[i];
+                for (var i = 0; i < response.Data.length; i++) {
+                    var task = response.Data[i];
                     var chkTask = "taskInput" + task.Id;
 
                     $(listContent).append(`<li class="list-group-item">
@@ -86,6 +96,7 @@ function getAllTasks(taskFilter) {
 function showNewTaskSection() {
     $("#btnAddTask").hide();
     $("#divAddTaskSection").show();
+    resetTaskForm();
 }
 
 function hideSaveTaskSection() {
@@ -109,22 +120,20 @@ function saveTask() {
         data: JSON.stringify(task),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function (data) {
+        success: function (response) {
 
-            if (data && data.success) {
+            if (response && response.Success) {
                 getAllTasks(filterType);
-                $("#hdnTaskId").val(0);
-                $("#txtTitle").val('');
-                $("#txtDescription").val('');
-                showSuccessAlert(data.message);
+                resetTaskForm();
+                showSuccessAlert(response.Message);
             }
-            else if (data.errors) {
-                for (var i = 0; i < data.errors.length; i++) {
-                    $("#errTaskMainError").append(`<span class="text-danger">${data.errors[i].ErrorMessage}</span><br />`)
+            else if (response.Errors && response.Errors.length > 0) {
+                for (var i = 0; i < response.Errors.length; i++) {
+                    $("#errTaskMainError").append(`<span class="text-danger">${response.Errors[i]}</span><br />`)
                 }
             }
-            else if (data.errorMessage)
-                $("#errTaskMainError").html(`<span class="text-danger">${data.errorMessage}</span>`);
+            else if (response.ErrorMessage)
+                $("#errTaskMainError").html(`<span class="text-danger">${response.ErrorMessage}</span>`);
             else
                 $("#errTaskMainError").html(`<span class="text-danger">Internal error occured</span>`);
 
@@ -138,24 +147,24 @@ function saveTask() {
 function editTask(taskId) {
     showNewTaskSection();
 
-    $.get(rootUrl + "/Task/Get/" + taskId, function (data) {
-        if (data) {
-            $("#hdnTaskId").val(data.Id);
-            $("#txtTitle").val(data.Name);
-            $("#txtDescription").val(data.Description);
+    $.get(rootUrl + "/Task/Get/" + taskId, function (response) {
+        if (response && response.Success) {
+            $("#hdnTaskId").val(response.Data.Id);
+            $("#txtTitle").val(response.Data.Name);
+            $("#txtDescription").val(response.Data.Description);
         }
-        else showErrorAlert(data.errorMessage);
+        else showErrorAlert(response.ErrorMessage);
     });
 }
 
 function deleteTask(taskId) {
     getConfirmationBox('Are you sure you want to delete this task?', () => {
-        $.post(rootUrl + "/Task/Delete/" + taskId, function (data) {
-            if (data && data.success) {
-                showInfoAlert(data.message);
+        $.post(rootUrl + "/Task/Delete/" + taskId, function (response) {
+            if (response && response.Success) {
+                showInfoAlert(response.Message);
                 getAllTasks(filterType);
             }
-            else showErrorAlert(data.errorMessage);
+            else showErrorAlert(response.ErrorMessage);
         });
     }, () => { })
 
@@ -164,11 +173,19 @@ function deleteTask(taskId) {
 function markAsTaskCompleted(taskId, chkElemId) {
     var taskCheckBox = document.getElementById(chkElemId);
 
-    $.post(rootUrl + "/Task/ChangeStatus/" + taskId + "?isCompleted=" + taskCheckBox.checked, function (data) {
-        if (data && data.success) {
+    $.post(rootUrl + "/Task/ChangeStatus/" + taskId + "?isCompleted=" + taskCheckBox.checked, function (response) {
+        if (response && response.Success) {
             getAllTasks(filterType);
-            showSuccessAlert(data.message);
+            showInfoAlert(response.Message);
         }
-        else showErrorAlert(data.errorMessage);
+        else showErrorAlert(response.ErrorMessage);
     });
+}
+
+
+function resetTaskForm() {
+    $("#hdnTaskId").val(0);
+    $("#txtTitle").val('');
+    $("#txtDescription").val('');
+    $("#errTaskMainError").html('');
 }

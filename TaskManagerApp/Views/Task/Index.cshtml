@@ -14,15 +14,15 @@
     <div class="card-body p-0">
         <nav>
             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" id="nav-all-task" data-loadFor="1" data-toggle="tab" href="#nav-all-task" role="tab"
+                <a class="nav-item nav-link active" id="nav-all-task" data-loadFor="1" role="tab"
                    aria-controls="nav-home" aria-selected="true">
                     <strong>All</strong>
                 </a>
-                <a class="nav-item nav-link" id="nav-completed-task" data-loadFor="2" data-toggle="tab" href="#nav-all-task" role="tab"
+                <a class="nav-item nav-link" id="nav-completed-task" data-loadFor="2" role="tab"
                    aria-controls="nav-profile" aria-selected="false">
                     <strong>Completed</strong>
                 </a>
-                <a class="nav-item nav-link" id="nav-pending-task" data-loadFor="3" data-toggle="tab" href="#nav-all-task" role="tab"
+                <a class="nav-item nav-link" id="nav-pending-task" data-loadFor="3" role="tab"
                    aria-controls="nav-contact" aria-selected="false">
                     <strong>Remaining</strong>
                 </a>
@@ -75,12 +75,20 @@
                 <div id="errTaskMainError"></div>
 
                 <div class="mb-2">
-                    <label for="txtTitle" class="form-label">Title <span class="text-danger">*</span></label>
+                    <label for="txtTitle" class="form-label">
+                        Title
+                        <span class="text-danger">*</span>
+                        <span class="text-info font-italic">(2-100 characters allowed)</span>
+                    </label>
                     <input type="text" id="txtTitle" class="form-control" placeholder="New Task.." />
                 </div>
 
                 <div class="mb-3">
-                    <label for="txtDescription" class="form-label">Description <span class="text-danger">*</span></label>
+                    <label for="txtDescription" class="form-label">
+                        Description
+                        <span class="text-danger">*</span>
+                    </label>
+                    <span class="text-info font-italic">(10-500 characters allowed)</span>
                     <textarea id="txtDescription" , class="form-control" placeholder="Enter task in details.." rows="2"></textarea>
                 </div>
 
@@ -95,16 +103,4 @@
 
 @section Scripts{
     <script src="~/Content/js/Task/task.js"></script>
-
-    <script>
-        $(function () {
-            $(".nav-item.nav-link").on('click', function () {
-                $(".nav-item.nav-link").removeClass("active");
-                $(this).addClass("active");
-
-                filterType = $(this).attr("data-loadFor");
-                getAllTasks(filterType);
-            })
-        })
-    </script>
 }

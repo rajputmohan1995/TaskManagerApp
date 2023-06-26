@@ -228,6 +228,10 @@ i {
         border-bottom: 2px solid #3f6ad8;
     }
 
+.widget-content-left {
+    max-width: 560px;
+}
+
 @media (max-width: 500px) {
     .body-content {
         margin-top: 0px !important;

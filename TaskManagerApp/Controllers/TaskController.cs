@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using TaskManagerApp.Data.Entities;
@@ -14,7 +15,7 @@ namespace TaskManagerApp.Controllers
         // create a constructor with ITaskService as parameter
         public TaskController(ITaskService taskService)
         {
-            _taskService = taskService;
+            _taskService = taskService ?? throw new ArgumentNullException(nameof(taskService));
         }
 
         // GET: Task
@@ -28,7 +29,7 @@ namespace TaskManagerApp.Controllers
             // call GetAllTasks method from ITaskService
             // convert IEnumerable<TaskEntity> to List<TaskEntity>
             var tasks = _taskService.GetAllTasks(taskFilter).ToList();
-            return Json(tasks, JsonRequestBehavior.AllowGet);
+            return Json(new ResponseResult<List<TaskEntity>>(true, tasks), JsonRequestBehavior.AllowGet);
         }
 
         // GET: Task/Edit/5
@@ -37,7 +38,9 @@ namespace TaskManagerApp.Controllers
             // call GetTaskById method from ITaskService
             // convert TaskEntity to TaskEntity
             var task = _taskService.GetTaskById(id);
-            return Json(task, JsonRequestBehavior.AllowGet);
+            if (task == null)
+                return Json(new ResponseResult<TaskEntity>(false, "Task not found"), JsonRequestBehavior.AllowGet);
+            return Json(new ResponseResult<TaskEntity>(true, task), JsonRequestBehavior.AllowGet);
         }
 
         // POST: Task/Create
@@ -52,7 +55,7 @@ namespace TaskManagerApp.Controllers
                 // validate taskEntity model
                 if (!ModelState.IsValid)
                 {
-                    return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors) }, JsonRequestBehavior.AllowGet);
+                    return Json(new ResponseResult<TaskEntity>(false, ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList()), JsonRequestBehavior.AllowGet);
                 }
 
                 TaskEntity savedTask = null;
@@ -60,11 +63,12 @@ namespace TaskManagerApp.Controllers
                     savedTask = _taskService.CreateTask(taskEntity);
                 else
                     savedTask = _taskService.UpdateTask(taskEntity.Id, taskEntity);
-                return Json(new { success = true, data = savedTask, message = "Task saved successfully" });
+
+                return Json(new ResponseResult<TaskEntity>(true, savedTask, "Task saved successfully"));
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, errorMessage = ex.Message });
+                return Json(new ResponseResult<TaskEntity>(false, ex.Message));
             }
         }
 
@@ -75,12 +79,14 @@ namespace TaskManagerApp.Controllers
             try
             {
                 // call DeleteTask method from ITaskService
-                _taskService.DeleteTaskById(id);
-                return Json(new { success = true, message = "Task deleted successfully" });
+                var isDeleted = _taskService.DeleteTaskById(id);
+                if (isDeleted)
+                    return Json(new ResponseResult<TaskEntity>(true, null, "Task deleted successfully"));
+                return Json(new ResponseResult<TaskEntity>(false, "Task not found"));
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, errorMessage = ex.Message });
+                return Json(new ResponseResult<TaskEntity>(false, ex.Message));
             }
         }
 
@@ -90,12 +96,14 @@ namespace TaskManagerApp.Controllers
             try
             {
                 // call DeleteTask method from ITaskService
-                _taskService.IsCompleted(id, isCompleted);
-                return Json(new { success = true, message = $"Task marked as {(isCompleted ? "completed" : "incomplete")}" });
+                var isStatusChanged = _taskService.IsCompleted(id, isCompleted);
+                if (isStatusChanged)
+                    return Json(new ResponseResult<TaskEntity>(true, null, $"Task marked as {(isCompleted ? "completed" : "in-complete")}"));
+                return Json(new ResponseResult<TaskEntity>(false, "Task not found"));
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, errorMessage = ex.Message });
+                return Json(new ResponseResult<TaskEntity>(false, ex.Message));
             }
         }
 

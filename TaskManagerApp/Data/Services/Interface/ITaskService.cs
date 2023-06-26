@@ -10,8 +10,8 @@ namespace TaskManagerApp.Data.Services.Interface
         IEnumerable<TaskEntity> GetAllTasks(TaskFilter taskFilter = TaskFilter.All);
         TaskEntity GetTaskById(int id);
         TaskEntity CreateTask(TaskEntity taskEntity);
-        TaskEntity UpdateTask(int id, TaskEntity taskEntity);   
-        TaskEntity DeleteTaskById(int id);
-        TaskEntity IsCompleted(int taskId, bool isCompleted);
+        TaskEntity UpdateTask(int id, TaskEntity taskEntity);
+        bool DeleteTaskById(int id);
+        bool IsCompleted(int taskId, bool isCompleted);
     }
 }

@@ -9,7 +9,7 @@ namespace TaskManagerApp.Data.Entities
 
         public int Id { get; set; }
         [Required(ErrorMessage = "Task title is required")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "Task title with 10-500 characters allowed")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Task title with 2-100 characters allowed")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Task description is required")]
